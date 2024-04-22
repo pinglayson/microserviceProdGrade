@@ -20,6 +20,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useAuthContext } from "@/providers/AuthProvider";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -31,6 +32,7 @@ const formSchema = z.object({
 });
 
 const Signup = () => {
+  const { currentUser, setCurrentUser } = useAuthContext();
   const [errors, setErrors] = useState([]);
   const router = useRouter();
 
@@ -47,6 +49,7 @@ const Signup = () => {
       setErrors([]);
       const response = await axios.post("/api/users/signup", values);
 
+      await setCurrentUser(response?.data?.email);
       router.push("/");
     } catch (error) {
       if (error && axios.isAxiosError(error)) {
