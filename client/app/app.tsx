@@ -25,7 +25,6 @@ const App = ({
   }, [currentUser, user, setCurrentUser]);
 
   return (
-    // <AuthProvider value={data}>
     <>
       <header>
         <Nav />
@@ -34,8 +33,6 @@ const App = ({
         {children}
       </main>
     </>
-
-    // </AuthProvider>
   );
 };
 
