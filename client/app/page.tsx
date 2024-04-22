@@ -1,13 +1,18 @@
-import { buildClient } from "@/utils/build-client";
+"use client";
 
-const Home = async () => {
-  const client = buildClient();
-  const { data } = await client.get("/api/users/currentuser");
+import { useAuthContext } from "@/providers/AuthProvider";
 
-  return data.currentUser ? (
-    <h1>You are signed in</h1>
-  ) : (
-    <h1>You are NOT signed in</h1>
+const Home = () => {
+  const { currentUser } = useAuthContext();
+
+  return (
+    <>
+      {currentUser ? (
+        <h1>You are signed IN</h1>
+      ) : (
+        <h1>You are NOT signed in</h1>
+      )}
+    </>
   );
 };
 

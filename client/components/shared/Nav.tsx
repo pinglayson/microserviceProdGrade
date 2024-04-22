@@ -1,6 +1,8 @@
-import React from "react";
+"use client";
+import React, { useContext, useEffect } from "react";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
+import { useAuthContext } from "@/providers/AuthProvider";
 
 interface Props {
   currentUser: string;
@@ -11,8 +13,8 @@ interface Navlinks {
   href: false | "";
 }
 
-const Nav = ({ currentUser }: Props) => {
-  console.log(currentUser);
+const Nav = () => {
+  const { currentUser, setCurrentUser } = useAuthContext();
 
   return (
     <nav className="md:container py-4">

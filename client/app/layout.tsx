@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+
+import App from "./app";
 import { buildClient } from "@/utils/build-client";
-import Nav from "@/components/shared/Nav";
+
+import { AuthProvider } from "@/providers/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,17 +21,13 @@ export default async function RootLayout({
 }>) {
   const client = buildClient();
   const { data } = await client.get("/api/users/currentuser");
-  console.log(data.currentUser);
 
   return (
     <html lang="en">
       <body className={inter.className}>
-        <header>
-          <Nav currentUser={data?.currentUser?.email} />
-        </header>
-        <main className="flex min-h-screen flex-col items-center justify-between p-2">
-          {children}
-        </main>
+        <AuthProvider>
+          <App user={data?.currentUser?.email}>{children}</App>
+        </AuthProvider>
       </body>
     </html>
   );
