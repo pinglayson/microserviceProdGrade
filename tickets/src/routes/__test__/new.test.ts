@@ -1,12 +1,80 @@
 import request from "supertest";
 import { app } from "../../app";
+import { Ticket } from "../../models/tickets";
 
-it("has a route handler listening to /api/tickets for post request", async () => {});
+it("has a route handler listening to /api/tickets for post request", async () => {
+  const response = await request(app).post("/api/tickets").send({});
+  expect(response.status).not.toEqual(404);
+});
 
-it("can only be accessed if the user is signed in ", async () => {});
+it("can only be accessed if the user is signed in ", async () => {
+  await request(app).post("/api/tickets").send({}).expect(401);
+});
 
-it("returns an error if an invalid title is provided", async () => {});
+it("returns a status thatn 401 if the user is signed in", async () => {
+  const response = await request(app)
+    .post("/api/tickets")
+    .set("Cookie", global.signin())
+    .send({});
 
-it("it returns an error if an invalid price is provided", async () => {});
+  expect(response.status).not.toEqual(401);
+});
 
-it("creates a ticket with a valid input", async () => {});
+it("returns an error if an invalid title is provided", async () => {
+  await request(app)
+    .post("/api/tickets")
+    .set("Cookie", global.signin())
+    .send({
+      title: "",
+      price: 10,
+    })
+    .expect(400);
+
+  await request(app)
+    .post("/api/tickets")
+    .set("Cookie", global.signin())
+    .send({
+      price: 10,
+    })
+    .expect(400);
+});
+
+it("it returns an error if an invalid price is provided", async () => {
+  await request(app)
+    .post("/api/tickets")
+    .set("Cookie", global.signin())
+    .send({
+      title: "adasdsa",
+      price: -10,
+    })
+    .expect(400);
+
+  await request(app)
+    .post("/api/tickets")
+    .set("Cookie", global.signin())
+    .send({
+      title: "asdsadsa",
+    })
+    .expect(400);
+});
+
+it("creates a ticket with a valid input", async () => {
+  let tickets = await Ticket.find({});
+  expect(tickets.length).toEqual(0);
+
+  const title = "asdsadas";
+
+  await request(app)
+    .post("/api/tickets")
+    .set("Cookie", global.signin())
+    .send({
+      title: "asdsadas",
+      price: 20,
+    })
+    .expect(201);
+
+  tickets = await Ticket.find({});
+  expect(tickets.length).toEqual(1);
+  expect(tickets[0].price).toEqual(20);
+  expect(tickets[0].title).toEqual(title);
+});
